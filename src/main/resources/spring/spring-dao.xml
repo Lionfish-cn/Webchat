@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd">
+	<context:property-placeholder location="classpath:jdbc.properties"/>
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<!-- 数据库连接配置 -->
+		<property name="driverClass" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="user" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+		
+		<!-- c3p0专属配置 -->
+		<property name="maxPoolSize" value="30"/>
+		<property name="minPoolSize" value="10"/>
+		<!-- 关闭后不自动commit -->
+		<property name="autoCommitOnClose" value="false"/>
+		<!-- 获取连接超时 -->
+		<property name="checkoutTimeout" value="10000"/>
+		<!-- 连接失败次数 -->
+		<property name="acquireRetryAttempts" value="2"/>
+	</bean>
+	
+	<!-- 配置sqlsessoinfactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 关联数据源 -->
+		<property name="dataSource" ref="dataSource"/>
+		<!-- mybatis配置文件 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<!-- 扫描entity包 使用别名 -->
+		<property name="typeAliasesPackage" value="com.chat.entity"/>
+		<!-- 扫描mybatis mapper 配置文件  -->
+		<property name="mapperLocations">
+			<value>
+				classpath:/mapper/*.xml
+			</value>
+		</property>
+	</bean>
+	<!-- 配置dao接口包，自动注入spring -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 注入 sqlSessionFactory -->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+		<!-- 扫描dao接口包 -->
+		<property name="basePackage"  value="com.chat.dao"/>
+	</bean>
+	
+</beans>

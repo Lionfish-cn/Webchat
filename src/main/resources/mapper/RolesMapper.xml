@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chat.dao.RolesMapper" >
+  <resultMap id="BaseResultMap" type="com.chat.entity.Roles" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="t_role" property="tRole" jdbcType="VARCHAR" />
+    <result column="t_role_url" property="tRoleUrl" jdbcType="VARCHAR" />
+    <result column="t_user_id" property="tUserId" jdbcType="VARCHAR" />
+    <result column="t_time" property="tTime" jdbcType="TIMESTAMP" />
+    <result column="t_super_user" property="tSuperUser" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, t_role, t_role_url, t_user_id, t_time, t_super_user
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_roles
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectUrlAndRolesByUserId" parameterType="java.lang.String"  resultMap="BaseResultMap">
+  	select * from t_roles where t_user_id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_roles
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.chat.entity.Roles" >
+    insert into t_roles (id, t_role, t_role_url, 
+      t_user_id, t_time, t_super_user
+      )
+    values (#{id,jdbcType=VARCHAR}, #{tRole,jdbcType=VARCHAR}, #{tRoleUrl,jdbcType=VARCHAR}, 
+      #{tUserId,jdbcType=VARCHAR}, #{tTime,jdbcType=TIMESTAMP}, #{tSuperUser,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.chat.entity.Roles" >
+    insert into t_roles
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tRole != null" >
+        t_role,
+      </if>
+      <if test="tRoleUrl != null" >
+        t_role_url,
+      </if>
+      <if test="tUserId != null" >
+        t_user_id,
+      </if>
+      <if test="tTime != null" >
+        t_time,
+      </if>
+      <if test="tSuperUser != null" >
+        t_super_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tRole != null" >
+        #{tRole,jdbcType=VARCHAR},
+      </if>
+      <if test="tRoleUrl != null" >
+        #{tRoleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tUserId != null" >
+        #{tUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tSuperUser != null" >
+        #{tSuperUser,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chat.entity.Roles" >
+    update t_roles
+    <set >
+      <if test="tRole != null" >
+        t_role = #{tRole,jdbcType=VARCHAR},
+      </if>
+      <if test="tRoleUrl != null" >
+        t_role_url = #{tRoleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tUserId != null" >
+        t_user_id = #{tUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        t_time = #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tSuperUser != null" >
+        t_super_user = #{tSuperUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chat.entity.Roles" >
+    update t_roles
+    set t_role = #{tRole,jdbcType=VARCHAR},
+      t_role_url = #{tRoleUrl,jdbcType=VARCHAR},
+      t_user_id = #{tUserId,jdbcType=VARCHAR},
+      t_time = #{tTime,jdbcType=TIMESTAMP},
+      t_super_user = #{tSuperUser,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

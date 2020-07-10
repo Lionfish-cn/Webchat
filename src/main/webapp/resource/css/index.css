@@ -1,0 +1,32 @@
+#app {
+	width: 30%;
+	margin: 0 auto;
+	margin-top: 100px;
+	height: 300px;
+}
+
+#errorStyle {
+	color: red;
+	font-size: 15px;
+	position: absolute;
+	margin-left: 50px;
+	margin-top: -50px;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+.el-header {
+	background-color: #B3C0D1;
+	color: #333;
+	line-height: 60px;
+}
+
+.el-aside {
+	color: #333;
+}
+
+#chat-gui-app{
+	width:95%;
+	margin:0 auto;
+	margin-top:10px;
+}

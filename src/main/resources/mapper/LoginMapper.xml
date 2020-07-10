@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chat.dao.LoginMapper" >
+  <resultMap id="BaseResultMap" type="com.chat.entity.Login" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="t_username" property="tUsername" jdbcType="VARCHAR" />
+    <result column="t_password" property="tPassword" jdbcType="VARCHAR" />
+    <result column="t_ip" property="tIp" jdbcType="VARCHAR" />
+    <result column="t_email" property="tEmail" jdbcType="VARCHAR" />
+    <result column="t_addr" property="tAddr" jdbcType="VARCHAR" />
+    <result column="t_time" property="tTime" jdbcType="TIMESTAMP" />
+    <result column="t_image" property="tImage" jdbcType="VARCHAR" />
+    <result column="t_nick_name" property="tNickName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, t_username, t_password, t_ip, t_email, t_addr, t_time, t_image,t_nick_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_login
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select
+  	<include refid="Base_Column_List" />
+  	from t_login
+    where t_username = #{tUserName,jdbcType=VARCHAR}  
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_login
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.chat.entity.Login" >
+    insert into t_login (id, t_username, t_password, 
+      t_ip, t_email, t_addr, 
+      t_time, t_image,t_nick_name)
+    values (#{id,jdbcType=VARCHAR}, #{tUsername,jdbcType=VARCHAR}, #{tPassword,jdbcType=VARCHAR}, 
+      #{tIp,jdbcType=VARCHAR}, #{tEmail,jdbcType=VARCHAR}, #{tAddr,jdbcType=VARCHAR}, 
+      #{tTime,jdbcType=TIMESTAMP}, #{tImage,jdbcType=VARCHAR},#{tNickName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.chat.entity.Login" >
+    insert into t_login
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tUsername != null" >
+        t_username,
+      </if>
+      <if test="tPassword != null" >
+        t_password,
+      </if>
+      <if test="tIp != null" >
+        t_ip,
+      </if>
+      <if test="tEmail != null" >
+        t_email,
+      </if>
+      <if test="tAddr != null" >
+        t_addr,
+      </if>
+      <if test="tTime != null" >
+        t_time,
+      </if>
+      <if test="tImage != null" >
+        t_image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tUsername != null" >
+        #{tUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="tPassword != null" >
+        #{tPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="tIp != null" >
+        #{tIp,jdbcType=VARCHAR},
+      </if>
+      <if test="tEmail != null" >
+        #{tEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="tAddr != null" >
+        #{tAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tImage != null" >
+        #{tImage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chat.entity.Login" >
+    update t_login
+    <set >
+      <if test="tUsername != null" >
+        t_username = #{tUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="tPassword != null" >
+        t_password = #{tPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="tIp != null" >
+        t_ip = #{tIp,jdbcType=VARCHAR},
+      </if>
+      <if test="tEmail != null" >
+        t_email = #{tEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="tAddr != null" >
+        t_addr = #{tAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        t_time = #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tImage != null" >
+        t_image = #{tImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chat.entity.Login" >
+    update t_login
+    set t_username = #{tUsername,jdbcType=VARCHAR},
+      t_password = #{tPassword,jdbcType=VARCHAR},
+      t_ip = #{tIp,jdbcType=VARCHAR},
+      t_email = #{tEmail,jdbcType=VARCHAR},
+      t_addr = #{tAddr,jdbcType=VARCHAR},
+      t_time = #{tTime,jdbcType=TIMESTAMP},
+      t_image = #{tImage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<!-- 1.开启SpringMVC注解模式 -->
+	<!--
+		 简化配置： 
+		(1)自动注册DefaultAnnotationHandlerMapping,AnnotationMethodHandlerAdapter 
+		(2)提供一些列：数据绑定，数字和日期的format @NumberFormat, @DateTimeFormat, xml,json默认读写支持 
+	-->
+	<mvc:annotation-driven/>
+	
+	<!-- 自动扫描该包，使SpringMVC认为包下用了@Controller注解的类使控制器 -->
+	<context:component-scan base-package="com.chat.control"/>
+	
+	<!-- 避免IE执行AJAX时，返回JSON出现下载文件 -->
+	
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+	<!-- 	
+		<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+			<property name="messageConverters">
+				<list>
+					<ref bean="mappingJacksonHttpMessageConverter"/>JSON转换器
+				</list>
+			</property>
+		</bean>
+	 -->
+	<!-- 定义跳转的文件的前后缀，视图模式配置  -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+	<!-- 配置文件上传 -->
+	<!-- 
+		<bean id="multipartResolver"
+				class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+			默认编码
+			<property name="defaultEncoding" value="utf-8"></property>
+			文件大小最大值
+			<property name="maxUploadSize" value="10485760000"></property>
+			内存中的最大值
+			<property name="maxInMemorySize" value="40960"></property>
+		</bean>
+	-->
+	
+	<!-- <bean id="runFilter" class="com.chat.filter.RunFilter" init-method="start" scope="singleton"></bean> -->
+</beans>

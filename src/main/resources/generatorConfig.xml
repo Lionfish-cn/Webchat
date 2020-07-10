@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration  
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"> 
+
+<!-- 根据数据库自动生成mapping\entity\Idao -->
+ <generatorConfiguration>
+ 	<classPathEntry location="E:\Program Files\mvn_repository\mysql\mysql-connector-java\5.1.30\mysql-connector-java-5.1.30.jar"></classPathEntry>
+ 	<context id="DB2Tables" targetRuntime="MyBatis3">
+ 		<commentGenerator>
+ 			<property name="suppressDate" value="true"></property>
+ 			<property name="suppressAllComments" value="true"></property>
+ 		</commentGenerator>
+ 		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1/chat" userId="root" password="root2020">
+ 		</jdbcConnection>
+ 		<javaTypeResolver>
+ 			<property name="forceBigDecimals" value="false"></property>
+ 		</javaTypeResolver>
+		<!-- 生成模型的包名和位置 -->
+		<javaModelGenerator targetPackage="com.chat.entity" targetProject="src/main/java">
+			<property name="enableSubPackages" value="true"></property>
+			<property name="trimStrings" value="true"></property>
+		</javaModelGenerator> 		
+		<!-- 生成映射文件的包名和位置 -->
+		<sqlMapGenerator targetProject="src/main/resources" targetPackage="mapper">
+			<property name="enableSubPackages" value="true"></property>
+		</sqlMapGenerator>
+		<!-- 生成Dao的包名和位置 -->
+		<javaClientGenerator targetProject="src/main/java" type="XMLMAPPER" targetPackage="com.chat.dao">
+			<property name="enableSubPackages" value="true"></property>
+		</javaClientGenerator>
+		
+		<!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名 -->
+		<table tableName="t_login" domainObjectName="Login" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" ></table>
+		<table tableName="t_record" domainObjectName="Record" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" ></table>
+		<table tableName="t_roles" domainObjectName="Roles" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false" ></table>
+ 	</context>
+ </generatorConfiguration>

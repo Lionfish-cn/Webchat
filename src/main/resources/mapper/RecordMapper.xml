@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chat.dao.RecordMapper" >
+  <resultMap id="BaseResultMap" type="com.chat.entity.Record" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="t_username" property="tUsername" jdbcType="VARCHAR" />
+    <result column="t_record" property="tRecord" jdbcType="VARCHAR" />
+    <result column="t_time" property="tTime" jdbcType="TIMESTAMP" />
+    <result column="t_target" property="tTarget" jdbcType="VARCHAR" />
+    <result column="t_send" property="tSend" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, t_username, t_record, t_time, t_target, t_send
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_record
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from t_record
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.chat.entity.Record" >
+    insert into t_record (id, t_username, t_record, 
+      t_time, t_target, t_send
+      )
+    values (#{id,jdbcType=VARCHAR}, #{tUsername,jdbcType=VARCHAR}, #{tRecord,jdbcType=VARCHAR}, 
+      #{tTime,jdbcType=TIMESTAMP}, #{tTarget,jdbcType=VARCHAR}, #{tSend,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.chat.entity.Record" >
+    insert into t_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tUsername != null" >
+        t_username,
+      </if>
+      <if test="tRecord != null" >
+        t_record,
+      </if>
+      <if test="tTime != null" >
+        t_time,
+      </if>
+      <if test="tTarget != null" >
+        t_target,
+      </if>
+      <if test="tSend != null" >
+        t_send,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="tUsername != null" >
+        #{tUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="tRecord != null" >
+        #{tRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tTarget != null" >
+        #{tTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="tSend != null" >
+        #{tSend,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.chat.entity.Record" >
+    update t_record
+    <set >
+      <if test="tUsername != null" >
+        t_username = #{tUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="tRecord != null" >
+        t_record = #{tRecord,jdbcType=VARCHAR},
+      </if>
+      <if test="tTime != null" >
+        t_time = #{tTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tTarget != null" >
+        t_target = #{tTarget,jdbcType=VARCHAR},
+      </if>
+      <if test="tSend != null" >
+        t_send = #{tSend,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.chat.entity.Record" >
+    update t_record
+    set t_username = #{tUsername,jdbcType=VARCHAR},
+      t_record = #{tRecord,jdbcType=VARCHAR},
+      t_time = #{tTime,jdbcType=TIMESTAMP},
+      t_target = #{tTarget,jdbcType=VARCHAR},
+      t_send = #{tSend,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

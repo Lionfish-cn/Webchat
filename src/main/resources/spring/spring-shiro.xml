@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context
+				 		http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+				 		http://www.springframework.org/schema/aop
+				 		http://www.springframework.org/schema/aop/spring-aop.xsd ">
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="loginUrl"  value="/index.jsp"/>
+		<property name="successUrl" value="/chatDo/toChatGui"/>
+		<property name="unauthorizedUrl" value="/errorDo/error403"/><!-- 没权限权限的页面 -->
+		<property name="securityManager" ref="securityManager"/>
+		
+		<property name="filterChainDefinitions">
+			<value>
+				/index.jsp = anon <!-- authc表示需要认证才能访问的页面 -->
+				/loginDo/chat-gui = authc,perms[/chatDo/toChatGui]<!-- perms 表示需要该权限才能访问的页面 -->
+				/registerDo/toRegister = anon
+				/logout = logout
+				<!-- anon 任何人都可以访问 -->
+				/ = anon
+			</value>
+		</property>
+		
+		<property name="filters">
+			<map>
+				<entry key="logout" value-ref="logoutFilter"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- <bean id="cacheManager" class="org.apache.shiro.cache.CacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:encache.xml"></property>
+	</bean> -->
+	
+	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+		<property name="redirectUrl" value="/index.jsp"/>
+	</bean>
+	
+	<bean id="myShiroRealm" class="com.chat.shiroSecurity.MyShiroRealm">
+	</bean>
+	
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.MemorySessionDAO"/>
+	
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="sessionDAO"/>
+		<!-- 去除URL上的JSSESSIONID，由于springmvc路径后有JSSESSIONID会导致访问失败-->
+		<property name="sessionIdUrlRewritingEnabled" value="false" />
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+	</bean>
+	
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="myShiroRealm"/>
+		<property name="sessionManager" ref="sessionManager"/>
+	</bean>
+	
+</beans>
