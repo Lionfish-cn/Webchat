@@ -1,14 +1,17 @@
 package com.chat.websocket;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -18,9 +21,15 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.chat.entity.Record;
+import com.chat.service.impl.RecordService;
+import com.chat.util.DateUtil;
 import com.chat.util.StringUtil;
+import com.chat.util.generate.IDGenerator;
 
 @ServerEndpoint(value="/webSocket/{username}",configurator = HttpSessionConfigurator.class)
 public class LocalWebSocket {
@@ -79,6 +88,7 @@ public class LocalWebSocket {
 		String from_ = _message.getString("from");
 		if(StringUtil.isNotNull(to_)) {
 			_message.put("type", "message");
+			_message.put("avatarPath","https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png");
 			sendSingleton(from_, _message.toString());
 			String[] tos = to_.split(";");
 			for (String to : tos) {
@@ -133,6 +143,53 @@ public class LocalWebSocket {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 *	 保存聊天记录 i/o
+	 */
+	public void saveChatRecord(String from,String to,String record) {
+		String path = "D://WebChatRecord//"+from + "//" + to;
+		File dirFile = new File(path);
+		if(!dirFile.exists()) {//判断文件夹是否存在
+			dirFile.mkdirs();
+		}
+		//如果文件夹存在
+		Date d = new Date();
+		String fileDate  = DateUtil.convertDateToString(d, "yyyy-MM-dd");
+		File file = new File(path+"//" + to +":" + fileDate+".txt");
+		try {
+			file.createNewFile();
+			FileReader fr = new FileReader(file);
+			FileWriter fw = new FileWriter(file);
+			if(fr.read()!=-1) {
+				record = "\n"+record;	
+			}
+			fw.write(record);
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Autowired
+	private RecordService recordService;
+	
+	public void saveChatRecord(JSONObject record_) {
+		String record = record_.getString("content");
+		Date sTime = DateUtil.convertStringToDate(record_.getString("time"), "yyyy-MM-dd HH:mm");
+		String to = record_.getString("to");
+		String from = record_.getString("from");
+		
+		Record r = new Record();
+		r.setId(IDGenerator.generatorID());
+		r.settRecord(record);
+		r.settSend(from);
+		r.settTarget(to);
+		r.settTime(sTime);
+		
+		recordService.insert(r);
 	}
 	
 	class OnlineCount implements Callable<Integer>{

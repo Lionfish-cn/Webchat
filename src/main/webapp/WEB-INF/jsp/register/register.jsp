@@ -124,7 +124,6 @@ var Main = {
 	    methods: {
 	      onSubmit(formname) {
 	    	  this.$refs[formname].validate((valid)=>{
-	    		  alert(valid);
 	    		  if(valid){
 	    			  $("#"+formname).submit();
 	    		  }else{

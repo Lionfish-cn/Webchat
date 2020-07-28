@@ -1,25 +1,28 @@
 package com.chat.control;
 
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSONObject;
 import com.chat.entity.Login;
-import com.chat.service.impl.ClientService;
 import com.chat.service.impl.LoginService;
+import com.chat.util.ArrayUtil;
 import com.chat.util.Base64Util;
+import com.chat.util.EntityUtil;
 
 @Controller
 @RequestMapping("/loginDo")
@@ -29,9 +32,6 @@ public class LoginDo {
 	
 	@Autowired
 	private LoginService loginService;
-	
-	@Autowired
-	private ClientService clientService;
 	
 	@RequestMapping("/login")
 	public String login(Login login,HttpServletRequest request) {
@@ -46,20 +46,7 @@ public class LoginDo {
 					SecurityUtils.getSecurityManager().logout(subject);
 					UsernamePasswordToken passwordToken = new UsernamePasswordToken(tUsername,tPassword);
 					subject.login(passwordToken);
-					int i = loginService.updateByPrimaryKey(sLogin);
-					if(i>0) {
-						log.info("修改t_login表成功，修改字段为t_ip");
-						return "redirect:chat-gui";
-					}else {
-						log.error("修改失败！请检查代码！");
-					}
-					/*
-					 * if(!subject.isAuthenticated()) { }else {
-					 * request.setAttribute("error","该用户已在线！"); }
-					 */
-				
-				
-				
+					return "redirect:chat-gui";
 			} catch (Exception e) {
 				request.setAttribute("error", "账号密码错误");
 				e.printStackTrace();
@@ -76,8 +63,56 @@ public class LoginDo {
 		return "chat-gui";
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping("/searchUser")
+	public String searchUser(HttpServletRequest request,HttpServletResponse response) {
+		try {
+			
+			log.info("== start query user by username on ajax==");
+			
+			request.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("UTF-8");
+			
+			String curUsername = request.getParameter("curUsername");
+			Login l = loginService.selectByUsername(curUsername);
+			if (l != null) {
+				List<Login> ls = new ArrayList<Login>();
+				ls.add(l);
+				List<String> args = new ArrayList<String>();
+				args.add("tUsername");
+				args.add("tPassword");
+				args.add("tNickName");
+				args.add("tEmail");
+				args.add("tAddr");
+				args.add("Id");
+				List<Map> rLogins = EntityUtil.entityListToMap(ls, args);
+				
+				if(!ArrayUtil.isEmpty(rLogins)) {
+					Map m = rLogins.get(0);
+					PrintWriter out = response.getWriter();
+					out.write(JSONObject.toJSONString(m));
+					out.flush();
+					out.close();
+				}
+			}
+			log.info("== end query user by username on ajax==");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping("/outLogin")
 	public String outlogin(Login login) {
 		return "success";
+	}
+	
+	public String update(Login login) {
+		int i = loginService.updateByPrimaryKey(login);
+		if(i>0) {
+			return "success";
+		}
+		return "chat-gui";
 	}
 }

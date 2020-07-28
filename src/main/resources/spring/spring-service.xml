@@ -10,7 +10,7 @@
 							http://www.springframework.org/schema/tx
 							http://www.springframework.org/schema/tx/spring-tx.xsd ">
 	<!-- 扫描service -->
-	<context:component-scan base-package="com.chat.service"/>
+	<context:component-scan base-package="com.chat.service.impl"/>
 	<!-- 配置事务管理器 -->
 	<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<!-- 注入datasource -->

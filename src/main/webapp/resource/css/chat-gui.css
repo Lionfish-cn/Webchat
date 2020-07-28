@@ -1,0 +1,84 @@
+.el-col {
+	border-radius: 4px;
+}
+
+.bg-purple-dark {
+	background: #99a9bf;
+}
+
+.bg-purple {
+	background: #d3dce6;
+}
+
+.bg-purple-light {
+	background: #e5e9f2;
+}
+
+.grid-content {
+	border-radius: 4px;
+	min-height: 36px;
+}
+
+.row-bg {
+	padding: 10px 0;
+	background-color: #f9fafc;
+}
+
+.avatar-uploader .el-upload {
+	border: 1px dashed #d9d9d9;
+	border-radius: 6px;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+	border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+	font-size: 28px;
+	color: #8c939d;
+	width: 178px;
+	height: 178px;
+	line-height: 178px;
+	text-align: center;
+}
+
+.avatar {
+	width: 178px;
+	height: 178px;
+	display: block;
+}
+
+li{
+	list-style-type: none;
+}
+
+*{
+	margin:0;
+	padding:0;
+}
+
+#el-main{
+	line-height:30px;
+	padding:10px;
+}
+
+.chat-right-li {
+	text-align: left;
+	width: 200px;
+	word-wrap: break-word;
+	border:1px solid #999;
+	margin-left:calc(100% - 200px);
+	margin-bottom:15px;
+}
+
+.chat-left-li {
+	text-align: right;
+	width: 200px;
+	word-wrap: break-word;
+	border:1px solid #999;
+	margin-right:calc(100% - 200px);
+	margin-bottom:15px;
+}

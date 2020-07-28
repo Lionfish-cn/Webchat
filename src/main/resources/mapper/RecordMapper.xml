@@ -18,6 +18,13 @@
     from t_record
     where id = #{id,jdbcType=VARCHAR}
   </select>
+  <select id="selectPage" resultMap = "BaseResultMap" parameterType="Map">
+		select  * from t_record order by t_time desc limit #{pageStart},#{pageSize};
+  </select>
+  
+  <select id="searchChatPerson" resultType="java.lang.String" parameterType="java.lang.String">
+  	select t_target from t_record where t_send=#{username} group by t_target
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from t_record
     where id = #{id,jdbcType=VARCHAR}

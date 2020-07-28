@@ -1,6 +1,7 @@
 package com.chat.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ public class RecordService implements IRecordService {
 	@Autowired
 	private RecordMapper iRecordDao;
 	
-	
 	public int insert(Record record) {
 		return iRecordDao.insert(record);
 	}
@@ -25,9 +25,14 @@ public class RecordService implements IRecordService {
 		return record;
 	}
 
-	public List<Record> selectByTargetIdOrSendId(String id) {
-		//return iRecordDao.selectByTargetIdOrSendId(id);
-		return null;
+	@Override
+	public List<Record> selectPage(Map<String, Object> map) {
+		return iRecordDao.selectPage(map);
+	}
+
+	@Override
+	public List<String> searchChatPerson(String username) {
+		return iRecordDao.searchChatPerson(username);
 	}
 
 }
