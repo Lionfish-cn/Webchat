@@ -50,17 +50,17 @@
 	</bean>
 	
 	<!-- 配置文件上传 -->
-	<!-- 
-		<bean id="multipartResolver"
-				class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-			默认编码
-			<property name="defaultEncoding" value="utf-8"></property>
-			文件大小最大值
-			<property name="maxUploadSize" value="10485760000"></property>
-			内存中的最大值
-			<property name="maxInMemorySize" value="40960"></property>
-		</bean>
-	-->
+	
+	<bean id="multipartResolver"
+			class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 默认编码 -->
+		<property name="defaultEncoding" value="utf-8"></property>
+		<!-- 文件大小最大值 -->
+		<property name="maxUploadSize" value="10485760000"></property>
+		<!-- 内存中的最大值 -->
+		<property name="maxInMemorySize" value="40960"></property>
+	</bean>
+	
 	
 	<!-- <bean id="runFilter" class="com.chat.filter.RunFilter" init-method="start" scope="singleton"></bean> -->
 </beans>

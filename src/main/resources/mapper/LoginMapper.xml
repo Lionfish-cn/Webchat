@@ -119,6 +119,9 @@
       <if test="tImage != null" >
         t_image = #{tImage,jdbcType=VARCHAR},
       </if>
+      <if test="tNickName != null" >
+        t_nick_name = #{tNickName,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>

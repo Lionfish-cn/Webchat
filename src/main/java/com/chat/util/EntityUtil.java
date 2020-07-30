@@ -9,7 +9,7 @@ import java.util.Map;
 public class EntityUtil {
 	
 	/**
-	 * 
+	 * 	根据List<T> 自动生成 args内属性为key属性值为value的map
 	 * @param <T>
 	 * @param t
 	 * @param args

@@ -13,6 +13,32 @@
     }
   }
 </style>
+
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>
 </head>
 <body>
 	<div id="chat-gui-app">
@@ -21,7 +47,8 @@
 			   <el-menu style="height:100%" :default-openeds="['1', '2']">
 			   	<el-submenu index="1">
 			        <template slot="title"><i class="el-icon-message"></i>个人资料</template>
-			        <el-menu-item index="1-1"><el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>&emsp;${curNickname}</el-menu-item>
+			        <el-menu-item index="1-1">
+			        <el-avatar shape="circle" @click.native="showAvatarDialog" size="100" fit="scale-down" :src="curUserImageurl"></el-avatar>&emsp;${curNickname}</el-menu-item>
   		            <el-menu-item index="1-2" @click.native="showDialog">查看个人资料</el-menu-item>
 			        <el-menu-item index="1-3" @click.native="logout">退出登录</el-menu-item>
 			    </el-submenu>
@@ -55,28 +82,15 @@
 		</el-container>
 		<el-dialog title="个人资料" :visible.sync="dialogFormVisible">
 			<el-form id="personForm" :rules="rules" ref="dialogForm" :model="dialogForm" action="${contextPath}loginDo/update">
-				<el-form-item prop="avatar" label="头像">
-					<el-upload
-					  class="avatar-uploader"
-					  action="${contextPath}avatarUploaderDo/uploader"
-					  :show-file-list="false"
-					  :on-success="handleAvatarSuccess"
-					  :before-upload="beforeAvatarUpload">
-					  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-					  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-					</el-upload>
-				</el-form-item>
 				<el-form-item label="昵称" prop="nickname">
 				    <el-input v-model="dialogForm.nickname" name="tNickName"  style="width:75%"></el-input>
 				    <el-input v-model="dialogForm.Id" name="Id"  style="display:none;"></el-input>
 				</el-form-item>
 				<el-form-item label="账号" prop="username">
 				    <el-input readonly="true" v-model="dialogForm.username" name="tUsername"  style="width:55%"></el-input>
-					<div class="end-title">不允许修改账号！</div>
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
 				    <el-input readonly="true" placeholder="请输入密码" v-model="dialogForm.password" name="tPassword"  style="width:55%" show-password></el-input>
-					<div class="end-title" onlick="updatePassword()">修改密码</div>
 				</el-form-item>
 				<el-form-item label="邮箱" prop="email">
 				    <el-input v-model="dialogForm.email" name="tEmail" style="width:50%"></el-input>
@@ -88,8 +102,28 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="commitDialog">取消</el-button>
-				<el-button @click="cancelDialog">确定</el-button>
+				<el-button type="primary" @click="commitDialog">提交</el-button>
+				<el-button @click="cancelDialog('form')">取消</el-button>
+			</div>
+		</el-dialog>
+		<el-dialog title="修改头像" :visible.sync="dialogAvatarVisible">
+			<el-form id="avatarForm" >
+				<el-form-item prop="avatar" label="头像">
+				<!-- https://jsonplaceholder.typicode.com/posts/ -->
+					<el-upload
+					  class="avatar-uploader"
+					  action="#"
+					  :show-file-list="false"
+					  :http-request = "handleAvatar"
+					  :before-upload="beforeAvatarUpload">
+					  <img v-if="imageUrl" :src="imageUrl" class="avatar">
+					  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+					</el-upload>
+				</el-form-item>			
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="updateAvatar">提交</el-button>
+				<el-button @click="cancelDialog('avatar')">取消</el-button>
 			</div>
 		</el-dialog>
 	</div>
@@ -97,14 +131,16 @@
 <script type="text/javascript">
 	var Main = {
 	    data() {
-	    	
 	      return {
 	        textarea : '',
 	        to : '',
 	        wsServer : null,
 	        ws : null,
 	        dialogFormVisible:false,
+	        dialogAvatarVisible:false,
 	        imageUrl:'',
+	        file : null,
+	        curUserImageurl:'${curUserImageurl}',
 	        dialogForm:{
         	  username: '',
 	          password: '',
@@ -131,16 +167,18 @@
 	    	loadChatPerson(){
 	    		var data = {"from":'${curUsername}'};
 	    		var rData = commonAjax("${contextPath}recordDo/searchChatPerson","post",data,"json",false);
-	    		var data_=null;
 	    		if(typeof(rData)=="string"){
 	    			return;
 	    		}else{
 	    			var list = rData.list;
-	    			for(var i=0;i<list.length;i++){
-	    				var userid = list[i];
+	    			var _json = eval('('+list+')')
+	    			for(var i=0;i<_json.length;i++){
+	    				var userid = _json[i].userid;
+	    				var name = _json[i].name;
+	    				var imageUrl = _json[i].imageUrl;
 	    				if($("[userid='"+userid+"']").length==0){
 		    				$("#el-menu-item").before("<li role='menuitem' tabindex='-1' onclick='startChat(this)' userid='"+userid+"' class='el-menu-item' style='padding-left: 40px;'>"+
-				    		"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span>"+userid+"</li>");
+				    		"<span class='el-avatar el-avatar--circle'><img src='"+imageUrl+"' style='object-fit: cover;'></span>"+name+"</li>");
 	    				}
 	    			}
 	    		}
@@ -237,8 +275,12 @@
 	    	logout(){
 	    		location.href="${contextPath}/logout";
 	    	},
-	    	cancelDialog(){
-	    		this.dialogFormVisible = false;
+	    	cancelDialog(t){
+	    		if(t=="form"){
+		    		this.dialogFormVisible = false;
+	    		}else{
+	    			this.dialogAvatarVisible = false;
+	    		}
 	    	},
 	    	commitDialog(){
 	    		$("#personForm").submit();
@@ -250,16 +292,15 @@
 	    		var rtnData = commonAjax("${contextPath}loginDo/searchUser","post",data,"json",false);
 	    		if(rtnData!="" || typeof(rtnData) == "undefined"){
 	    			this.dialogForm.nickname = rtnData.tNickName;
-	    			this.dialogF
-	    			orm.username = rtnData.tUsername;
+	    			this.dialogForm.username = rtnData.tUsername;
 	    			this.dialogForm.email = rtnData.tEmail;
 	    			this.dialogForm.addr = rtnData.tAddr;
 	    			this.dialogForm.Id = rtnData.Id;
 	    		}
 	    	},
-	    	handleAvatarSuccess(res, file) {
-	            this.imageUrl = URL.createObjectURL(file.raw);
-	            alert(this.imageUrl);
+	    	handleAvatar(data) {
+	            this.imageUrl = URL.createObjectURL(data.file);
+	            this.file =  data.file;
 	        },
 	        beforeAvatarUpload(file) {
 	            const isJPG = file.type === 'image/jpeg';
@@ -272,6 +313,19 @@
 	              this.$message.error('上传头像图片大小不能超过 2MB!');
 	            }
 	            return isJPG && isLt2M;
+	       	},
+	       	updateAvatar(){
+	       		var formdata = new FormData();
+	       		formdata.append("filename",this.file);
+	       		formdata.append("username",'${curUsername}');
+	       		var msg = commonAjax('${contextPath}avatarUploaderDo/uploader','post',formdata,'json',false,true);
+	       		if(msg!=""){
+	       			this.curUserImageurl = msg;
+	       			this.dialogAvatarVisible = false;
+	       		}
+	       	},
+	       	showAvatarDialog(){
+	       		this.dialogAvatarVisible = true;
 	       	}
 	    }
 	  };
@@ -299,7 +353,7 @@
 		for(var i=0;i<records.length;i++){
 			var record = records[i];
 			if(record.tSend=='${curUsername}'){
-				lis += "<li class='chat-right-li'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span></li>";
+				lis += "<li class='chat-right-li'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='"+this.curUserImageurl+"' style='object-fit: cover;'></span></li>";
 			}else{
 				lis += "<li class='chat-left-li'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span></li>";
 			}

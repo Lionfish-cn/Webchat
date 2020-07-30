@@ -30,13 +30,13 @@ public class LoginService implements ILoginService {
 		return login;
 	}
 
-	public int insert(Login record) {
-		int i = iLoginDao.insert(record);
+	public int insert(Login login) {
+		int i = iLoginDao.insert(login);
 		return i;
 	}
 
-	public int updateByPrimaryKey(Login record) {
-		int i = iLoginDao.updateByPrimaryKey(record);
+	public int updateByPrimaryKey(Login login) {
+		int i = iLoginDao.updateByPrimaryKey(login);
 		return i;
 	}
 	
@@ -44,6 +44,11 @@ public class LoginService implements ILoginService {
 	public void insert() {
 		Login login = selectByUsername("username");
 		System.out.println(login);
+	}
+
+	@Override
+	public int updateByPrimaryKeySelective(Login login) {
+		return iLoginDao.updateByPrimaryKeySelective(login);
 	}
 }
 

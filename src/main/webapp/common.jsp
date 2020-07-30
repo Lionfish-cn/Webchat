@@ -1,3 +1,5 @@
+<%@page import="com.chat.util.common.Constants"%>
+<%@page import="com.chat.util.StringUtil"%>
 <%@page import="com.chat.entity.Login"%>
 <%@page import="com.chat.util.UserUtil"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -14,6 +16,13 @@
 		request.setAttribute("curUsername", login.gettUsername());
 		request.setAttribute("curNickname", login.gettNickName());
 		request.setAttribute("curUserid", login.getId());
+		String imageUrl = login.gettImage();
+		System.out.println("Image:"+imageUrl);
+		if(StringUtil.isNull(imageUrl)){
+			imageUrl = Constants.DEF_IMAGE_URL;
+		}
+		System.out.println("Image:"+imageUrl);
+		request.setAttribute("curUserImageurl",imageUrl);
 	}
 %>
 <script type="text/javascript" src="<%=contextPath %>resource/js/vue.min.js"></script>

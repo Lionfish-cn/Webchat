@@ -26,7 +26,7 @@ import com.chat.util.EntityUtil;
 
 @Controller
 @RequestMapping("/loginDo")
-public class LoginDo {
+public class LoginDo{
 	
 	private Log log = LogFactory.getLog(getClass());
 	
@@ -108,10 +108,11 @@ public class LoginDo {
 		return "success";
 	}
 	
+	@RequestMapping("/update")
 	public String update(Login login) {
-		int i = loginService.updateByPrimaryKey(login);
+		int i = loginService.updateByPrimaryKeySelective(login);
 		if(i>0) {
-			return "success";
+			return "chat-gui";
 		}
 		return "chat-gui";
 	}

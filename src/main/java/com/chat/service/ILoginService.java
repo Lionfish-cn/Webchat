@@ -9,6 +9,9 @@ public interface ILoginService {
 	
 	int updateByPrimaryKey(Login record);
 	
+	int updateByPrimaryKeySelective(Login record);
+	
 	int insert(Login record);
+	
 	
 }

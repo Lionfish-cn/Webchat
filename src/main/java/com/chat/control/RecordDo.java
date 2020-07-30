@@ -15,12 +15,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
+import com.chat.entity.Login;
 import com.chat.entity.Record;
+import com.chat.service.impl.LoginService;
 import com.chat.service.impl.RecordService;
 import com.chat.util.ArrayUtil;
 import com.chat.util.DateUtil;
 import com.chat.util.EntityUtil;
 import com.chat.util.StringUtil;
+import com.chat.util.common.Constants;
 import com.chat.util.generate.IDGenerator;
 import com.chat.util.map.Page;
 
@@ -30,6 +33,9 @@ public class RecordDo {
 
 	@Autowired
 	private RecordService recordService;
+
+	@Autowired
+	private LoginService loginService;
 	
 	@RequestMapping("/searchRecord")
 	public String searchRecord(HttpServletRequest request,HttpServletResponse response) {
@@ -69,8 +75,14 @@ public class RecordDo {
 			l.add("tTime");
 			
 			List<Map> rMap  = EntityUtil.entityListToMap(records,l);
-			Map<String,Object> m = new HashMap<String, Object>();
-			rMap.add(m);
+			for (Map map2 : rMap) {
+				Object tsend = map2.get("tSend");
+				Object tTarget = map2.get("tTarget");
+				Login send = loginService.selectByUsername(tsend.toString());
+				Login target = loginService.selectByUsername(tTarget.toString());
+				map2.put("sendAvatar", getImageUrl(send));
+				map2.put("targetAvatar", getImageUrl(target));
+			}
 			map.put("pageNo", pageNo);
 			map.put("rowSize",rowSize);
 			map.put("list", ArrayUtil.removeEmptyCollection(rMap));
@@ -112,15 +124,27 @@ public class RecordDo {
 	}
 	
 	@RequestMapping("/searchChatPerson")
-	public void searchChatPerson(String from,HttpServletResponse response) {
+	public void searchChatPerson(String from,HttpServletRequest request,HttpServletResponse response) {
 		try {
+			request.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("UTF-8");
+			
 			PrintWriter out = response.getWriter();
 			List<String> usernames = recordService.searchChatPerson(from);
 			if(ArrayUtil.isEmpty(usernames)) {
 				out.write("{'error','null'}");
 			}else {
 				Map<String,Object> rMap = new HashMap<String, Object>();
-				rMap.put("list", usernames);
+				List<Map<String,Object>> persons = new ArrayList<Map<String,Object>>();
+				for (String username : usernames) {
+					Login l = loginService.selectByUsername(username);
+					Map<String,Object> m = new HashMap<String, Object>();
+					m.put("userid", l.gettUsername());
+					m.put("name", l.gettNickName());
+					m.put("imageUrl",getImageUrl(l));
+					persons.add(m);
+				}
+				rMap.put("list", JSONObject.toJSONString(persons));
 				out.write(JSONObject.toJSONString(rMap));
 			}
 			out.flush();
@@ -130,5 +154,14 @@ public class RecordDo {
 		
 		return;
 		
+	}
+	
+	public String getImageUrl(Login l) {
+		String imageUrl = l.gettImage();
+		if(StringUtil.isNull(l.gettImage())) {
+			imageUrl = Constants.DEF_IMAGE_URL; 
+		}
+		
+		return imageUrl;
 	}
 }
