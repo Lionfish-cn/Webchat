@@ -31,8 +31,24 @@ public class RecordService implements IRecordService {
 	}
 
 	@Override
-	public List<String> searchChatPerson(String username) {
+	public List<Record> searchChatPerson(String username) {
 		return iRecordDao.searchChatPerson(username);
+	}
+
+	@Override
+	public int searchIsntRead(String username) {
+		return iRecordDao.searchIsntRead(username);
+	}
+
+	@Override
+	public int updateByPrimaryKeySelective(Record record) {
+		return iRecordDao.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public int updateIsntRead(Record record) {
+		record.settIsRead(true);
+		return updateByPrimaryKeySelective(record);
 	}
 
 }

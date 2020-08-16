@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSONObject;
 import com.chat.entity.Login;
 import com.chat.service.impl.LoginService;
-import com.chat.util.ArrayUtil;
-import com.chat.util.Base64Util;
-import com.chat.util.EntityUtil;
+import com.util.ArrayUtil;
+import com.util.Base64Util;
+import com.util.EntityUtil;
 
 @Controller
 @RequestMapping("/loginDo")

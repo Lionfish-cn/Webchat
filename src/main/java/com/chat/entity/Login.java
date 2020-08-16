@@ -2,7 +2,22 @@ package com.chat.entity;
 
 import java.util.Date;
 
-public class Login {
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/")
+public class Login extends Record {
+	public Login() {
+		
+	}
+	private Login(String s) {
+		
+	}
+	protected Login(String s,String d) {
+		
+	}
+	
     private String id;
 
     private String tUsername;
@@ -91,6 +106,10 @@ public class Login {
 
 	public void settNickName(String tNickName) {
 		this.tNickName = tNickName;
+	}
+	
+	private String getprivatemethod() {
+		return "";
 	}
     
     

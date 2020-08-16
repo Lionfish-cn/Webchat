@@ -16,7 +16,9 @@ public interface RecordMapper {
     
     List<Record> selectPage(Map<String,Object> map);
     
-    List<String> searchChatPerson(String username);
+    List<Record> searchChatPerson(String username);
+    
+    int searchIsntRead(String username);
 
     int updateByPrimaryKeySelective(Record record);
 

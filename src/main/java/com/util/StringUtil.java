@@ -1,4 +1,4 @@
-package com.chat.util;
+package com.util;
 
 public class StringUtil {
 	

@@ -27,9 +27,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.chat.entity.Record;
 import com.chat.service.impl.RecordService;
-import com.chat.util.DateUtil;
-import com.chat.util.StringUtil;
-import com.chat.util.generate.IDGenerator;
+import com.util.DateUtil;
+import com.util.StringUtil;
+import com.util.generate.IDGenerator;
 
 @ServerEndpoint(value="/webSocket/{username}",configurator = HttpSessionConfigurator.class)
 public class LocalWebSocket {

@@ -19,13 +19,13 @@ import com.chat.entity.Login;
 import com.chat.entity.Record;
 import com.chat.service.impl.LoginService;
 import com.chat.service.impl.RecordService;
-import com.chat.util.ArrayUtil;
-import com.chat.util.DateUtil;
-import com.chat.util.EntityUtil;
-import com.chat.util.StringUtil;
-import com.chat.util.common.Constants;
-import com.chat.util.generate.IDGenerator;
-import com.chat.util.map.Page;
+import com.util.ArrayUtil;
+import com.util.DateUtil;
+import com.util.EntityUtil;
+import com.util.StringUtil;
+import com.util.common.Constants;
+import com.util.generate.IDGenerator;
+import com.util.map.Page;
 
 @Controller
 @RequestMapping("/recordDo")
@@ -59,7 +59,7 @@ public class RecordDo {
 			Page page = new Page();
 			page.settPageNo(pageNo);
 			page.settPageSize(rowSize*pageNo);
-			page.settPageStart(1);
+			page.settPageStart(0);
 			
 			Map<String,Object> map = new HashMap<String, Object>();
 			map.put("pageStart", page.gettPageStart());
@@ -73,6 +73,7 @@ public class RecordDo {
 			l.add("tTarget");
 			l.add("tSend");
 			l.add("tTime");
+			l.add("tIsRead");
 			
 			List<Map> rMap  = EntityUtil.entityListToMap(records,l);
 			for (Map map2 : rMap) {
@@ -91,6 +92,7 @@ public class RecordDo {
 			out.write(JSONObject.toJSONString(map));
 			out.flush();
 			out.close();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -130,18 +132,22 @@ public class RecordDo {
 			response.setCharacterEncoding("UTF-8");
 			
 			PrintWriter out = response.getWriter();
-			List<String> usernames = recordService.searchChatPerson(from);
+			List<Record> usernames = recordService.searchChatPerson(from);
 			if(ArrayUtil.isEmpty(usernames)) {
 				out.write("{'error','null'}");
 			}else {
 				Map<String,Object> rMap = new HashMap<String, Object>();
 				List<Map<String,Object>> persons = new ArrayList<Map<String,Object>>();
-				for (String username : usernames) {
+				for (Record r : usernames) {
+					String username = r.gettSend()+r.gettTarget();
+					username= username.replaceAll(from, "");
 					Login l = loginService.selectByUsername(username);
+					Integer isntRead = recordService.searchIsntRead(username);
 					Map<String,Object> m = new HashMap<String, Object>();
 					m.put("userid", l.gettUsername());
 					m.put("name", l.gettNickName());
 					m.put("imageUrl",getImageUrl(l));
+					m.put("isntRead", isntRead);
 					persons.add(m);
 				}
 				rMap.put("list", JSONObject.toJSONString(persons));
@@ -150,6 +156,7 @@ public class RecordDo {
 			out.flush();
 			out.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
 		return;
@@ -163,5 +170,25 @@ public class RecordDo {
 		}
 		
 		return imageUrl;
+	}
+	
+	@RequestMapping("/isntRead")
+	public void updateIsntRead(HttpServletRequest request,HttpServletResponse response) {
+		try {
+			String ids =  request.getParameter("ids");
+			String[] _ids = ids.split(";");
+			for (String id : _ids) {
+				Record r = recordService.selectByPrimaryKey(id);
+				recordService.updateIsntRead(r);
+			}
+			
+			PrintWriter out = response.getWriter();
+			out.write("success");
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return;
 	}
 }

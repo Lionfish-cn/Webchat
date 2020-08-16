@@ -66,19 +66,21 @@ li{
 }
 
 .chat-right-li {
-	text-align: left;
+	text-align: right;
 	width: 200px;
 	word-wrap: break-word;
 	border:1px solid #999;
 	margin-left:calc(100% - 200px);
 	margin-bottom:15px;
+	line-height:30px;
 }
 
 .chat-left-li {
-	text-align: right;
+	text-align: left;
 	width: 200px;
 	word-wrap: break-word;
 	border:1px solid #999;
 	margin-right:calc(100% - 200px);
 	margin-bottom:15px;
+	line-height:30px;
 }

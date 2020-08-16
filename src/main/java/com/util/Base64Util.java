@@ -1,4 +1,4 @@
-package com.chat.util;
+package com.util;
 
 import java.util.Base64;
 import java.util.Base64.Decoder;

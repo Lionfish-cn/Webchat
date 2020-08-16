@@ -19,7 +19,7 @@ import com.chat.entity.Login;
 import com.chat.entity.Roles;
 import com.chat.service.impl.LoginService;
 import com.chat.service.impl.RolesService;
-import com.chat.util.StringUtil;
+import com.util.StringUtil;
 
 public class MyShiroRealm extends AuthorizingRealm {
 

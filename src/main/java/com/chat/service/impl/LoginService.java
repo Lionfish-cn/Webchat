@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.chat.dao.LoginMapper;
 import com.chat.entity.Login;
 import com.chat.service.ILoginService;
-import com.chat.util.generate.IDGenerator;
 
 @Service
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -1,4 +1,4 @@
-package com.chat.util.generate;
+package com.util.generate;
 
 import java.util.Base64;
 import java.util.Base64.Encoder;

@@ -1,7 +1,6 @@
 package com.chat.control;
 
 import java.io.PrintWriter;
-import java.util.Base64;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,8 +13,8 @@ import com.chat.entity.Login;
 import com.chat.entity.Roles;
 import com.chat.service.impl.LoginService;
 import com.chat.service.impl.RolesService;
-import com.chat.util.Base64Util;
-import com.chat.util.generate.IDGenerator;
+import com.util.Base64Util;
+import com.util.generate.IDGenerator;
 
 @Controller
 @RequestMapping(value="/registerDo")

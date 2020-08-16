@@ -2,8 +2,8 @@ package com.chat.entity;
 
 import java.util.Date;
 
-import com.chat.util.StringUtil;
-import com.chat.util.generate.IDGenerator;
+import com.util.StringUtil;
+import com.util.generate.IDGenerator;
 
 public class Roles {
     private String id;

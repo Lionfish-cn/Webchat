@@ -1,4 +1,4 @@
-package com.chat.util.map;
+package com.util.map;
 
 import java.util.List;
 

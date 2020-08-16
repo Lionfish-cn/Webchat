@@ -8,9 +8,16 @@
     <result column="t_time" property="tTime" jdbcType="TIMESTAMP" />
     <result column="t_target" property="tTarget" jdbcType="VARCHAR" />
     <result column="t_send" property="tSend" jdbcType="VARCHAR" />
+    <result column="t_is_read" property="tIsRead" jdbcType="INTEGER" />
   </resultMap>
+  
+  <resultMap id="twoResultMap" type="com.chat.entity.Record" >
+    <result column="t_target" property="tTarget" jdbcType="VARCHAR" />
+    <result column="t_send" property="tSend" jdbcType="VARCHAR" />
+  </resultMap>
+  
   <sql id="Base_Column_List" >
-    id, t_username, t_record, t_time, t_target, t_send
+    id, t_username, t_record, t_time, t_target, t_send , t_is_read
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -19,11 +26,15 @@
     where id = #{id,jdbcType=VARCHAR}
   </select>
   <select id="selectPage" resultMap = "BaseResultMap" parameterType="Map">
-		select  * from t_record order by t_time desc limit #{pageStart},#{pageSize};
+		select  * from t_record order by t_time asc limit #{pageStart},#{pageSize};
   </select>
   
-  <select id="searchChatPerson" resultType="java.lang.String" parameterType="java.lang.String">
-  	select t_target from t_record where t_send=#{username} group by t_target
+  <select id="searchChatPerson" resultMap="twoResultMap" parameterType="java.lang.String">
+  	select t_target,t_send from t_record where t_send=#{username} or t_target=#{username} group by t_target,t_send;
+  </select>
+  
+  <select id="searchIsntRead" resultType="java.lang.Integer" parameterType="java.lang.String">
+  		select count(*) from t_record where  (t_is_read is null or t_is_read = 0) and t_send = #{username};
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from t_record
@@ -31,10 +42,10 @@
   </delete>
   <insert id="insert" parameterType="com.chat.entity.Record" >
     insert into t_record (id, t_username, t_record, 
-      t_time, t_target, t_send
+      t_time, t_target, t_send,t_is_read
       )
     values (#{id,jdbcType=VARCHAR}, #{tUsername,jdbcType=VARCHAR}, #{tRecord,jdbcType=VARCHAR}, 
-      #{tTime,jdbcType=TIMESTAMP}, #{tTarget,jdbcType=VARCHAR}, #{tSend,jdbcType=VARCHAR}
+      #{tTime,jdbcType=TIMESTAMP}, #{tTarget,jdbcType=VARCHAR}, #{tSend,jdbcType=VARCHAR},#{tIsRead,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.chat.entity.Record" >
@@ -58,6 +69,10 @@
       <if test="tSend != null" >
         t_send,
       </if>
+      <if test="tIsRead != null" >
+        t_is_read
+      </if>
+      
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -77,6 +92,9 @@
       </if>
       <if test="tSend != null" >
         #{tSend,jdbcType=VARCHAR},
+      </if>
+      <if test="tIsRead != null" >
+        #{tIsRead,jdbcType=INTEGER}
       </if>
     </trim>
   </insert>
@@ -98,6 +116,9 @@
       <if test="tSend != null" >
         t_send = #{tSend,jdbcType=VARCHAR},
       </if>
+      <if test="tIsRead != null" >
+        t_is_read = #{tIsRead,jdbcType=VARCHAR}
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -107,7 +128,8 @@
       t_record = #{tRecord,jdbcType=VARCHAR},
       t_time = #{tTime,jdbcType=TIMESTAMP},
       t_target = #{tTarget,jdbcType=VARCHAR},
-      t_send = #{tSend,jdbcType=VARCHAR}
+      t_send = #{tSend,jdbcType=VARCHAR},
+      t_is_read = #{tIsRead,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

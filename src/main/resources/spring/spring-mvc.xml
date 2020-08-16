@@ -21,6 +21,8 @@
 	<!-- 自动扫描该包，使SpringMVC认为包下用了@Controller注解的类使控制器 -->
 	<context:component-scan base-package="com.chat.control"/>
 	
+	<context:component-scan base-package="com.webmap.control"/>
+	
 	<!-- 避免IE执行AJAX时，返回JSON出现下载文件 -->
 	
 	<bean id="mappingJacksonHttpMessageConverter"
@@ -32,16 +34,6 @@
 		</property>
 	</bean>
 	
-	<!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
-	<!-- 	
-		<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-			<property name="messageConverters">
-				<list>
-					<ref bean="mappingJacksonHttpMessageConverter"/>JSON转换器
-				</list>
-			</property>
-		</bean>
-	 -->
 	<!-- 定义跳转的文件的前后缀，视图模式配置  -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />

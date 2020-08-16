@@ -12,5 +12,14 @@ public interface IRecordService {
 	
 	List<Record> selectPage(Map<String,Object> map);
 	
-	List<String> searchChatPerson(String username);
+	List<Record> searchChatPerson(String username);
+	
+	int searchIsntRead(String username);
+	
+	int updateByPrimaryKeySelective(Record record);
+	
+	/*
+	 * 修改记录为已读
+	 */
+	int updateIsntRead(Record record);
 }

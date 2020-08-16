@@ -50,7 +50,9 @@
 			        <el-menu-item index="1-1">
 			        <el-avatar shape="circle" @click.native="showAvatarDialog" size="100" fit="scale-down" :src="curUserImageurl"></el-avatar>&emsp;${curNickname}</el-menu-item>
   		            <el-menu-item index="1-2" @click.native="showDialog">查看个人资料</el-menu-item>
-			        <el-menu-item index="1-3" @click.native="logout">退出登录</el-menu-item>
+			        <el-menu-item index="1-3" @click.native="logout">
+			        	退出登录
+			        </el-menu-item>
 			    </el-submenu>
 			    <el-submenu index="2">
 			        <template slot="title"><i class="el-icon-message"></i>聊天列表</template>
@@ -60,10 +62,11 @@
 		  </el-aside>
 		  <el-container style="background-color:#eee">
 		    <el-header style="text-align: right; font-size: 15px">
+		    	<a href="${contextPath}bMapDo/toMap">查看地图</a>
 		      <el-dropdown>
 		        <i class="el-icon-setting"></i>
 		        <el-dropdown-menu slot="dropdown">
-		        	<el-dropdown-item @click.native="showDialog">查看个人资料</el-dropdown-item>
+		        	<el-dropdown-item @click.native="showDialog">查看资料</el-dropdown-item>
 		        </el-dropdown-menu>
 		        <span id="toUser"></span>
 		      </el-dropdown>
@@ -176,9 +179,16 @@
 	    				var userid = _json[i].userid;
 	    				var name = _json[i].name;
 	    				var imageUrl = _json[i].imageUrl;
+	    				var isntRead = _json[i].isntRead;
+	    				if(isntRead<=0){
+	    					isntRead = "";
+	    				}
 	    				if($("[userid='"+userid+"']").length==0){
-		    				$("#el-menu-item").before("<li role='menuitem' tabindex='-1' onclick='startChat(this)' userid='"+userid+"' class='el-menu-item' style='padding-left: 40px;'>"+
-				    		"<span class='el-avatar el-avatar--circle'><img src='"+imageUrl+"' style='object-fit: cover;'></span>"+name+"</li>");
+		    				$("#el-menu-item").before("<ul role='menu' class='el-menu el-menu--inline'>"+
+			    				"<li role='menuitem' tabindex='-1' onclick='startChat(this)' userid='"+userid+"' class='el-menu-item' style='padding-left: 40px;'>"+
+					    		"<span class='el-avatar el-avatar--circle'><img src='"+imageUrl+"' style='object-fit: cover;'></span>&emsp;"+
+					    		"<div class='el-badge item'>"+name+
+					    		"<sup class='"+(isntRead==""?"":'el-badge__content el-badge__content--undefined is-fixed')+"' supuserid='"+userid+"'>"+isntRead+"</sup></div></li></ul");
 	    				}
 	    			}
 	    		}
@@ -209,12 +219,18 @@
 	    		}
 	    		var value = this.textarea;
 	    		if(value==""){
-	    			alert("说点什么吧！");
+	    			this.$message({
+	    				message:'你就写点东西吧！',
+	    				type:'warning'
+	    			});
 	    			return;
 	    		}
 	    		var to = $("#toUser").text();
 	    		if(to==""){
-	    			alert("你想要发给谁哦");
+	    			this.$message({
+	    				message:'你是要发给空气吗？',
+	    				type:'warning'
+	    			});
 	    			return;
 	    		}
 	    		this.ws.send(JSON.stringify({
@@ -245,8 +261,8 @@
 		    			var curuser = $("[userid='"+userid+"']");
 		    			if(curuser.length<=0){
 			    			if(userid != '${curUsername}'){//排除自己
-			    				$("#el-menu-item").append("<li role='menuitem' tabindex='-1' onclick='startChat(this)' userid='"+userid+"' class='el-menu-item' style='padding-left: 40px;'>"+
-			    				"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span>"+userid+"</li>");	
+			    				$("#el-menu-item").append("<ul role='menu' class='el-menu el-menu--inline'><li role='menuitem' tabindex='-1' onclick='startChat(this)' userid='"+userid+"' class='el-menu-item' style='padding-left: 40px;'>"+
+			    				"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span>"+userid+"</li></ul");	
 			    			}
 		    			}
 		    		}
@@ -339,6 +355,9 @@
 		var to = userid;
 		var from = '${curUsername}';
 		
+		$("[supuserid='"+userid+"']").attr("class","")
+		$("[supuserid='"+userid+"']").html("")
+		
 		var rowSize = $("#rowSize").text();
 		var pageNo = $("#pageNo").text();
 		var data = {"to":to,"from":from,"rowSize":rowSize,"pageNo":pageNo};
@@ -350,15 +369,28 @@
 		var records = data_.list;
 		$("#el-main").html("");
 		var lis = "";
+		var ids = "";
 		for(var i=0;i<records.length;i++){
 			var record = records[i];
+			var isRead = record.tIsRead == "1" ? "已读":"未读";
 			if(record.tSend=='${curUsername}'){
-				lis += "<li class='chat-right-li'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='"+this.curUserImageurl+"' style='object-fit: cover;'></span></li>";
+				lis += "<li class='chat-right-li' id='"+record.Id+"'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='"+record.sendAvatar+"' style='object-fit: cover;'></span>&emsp;"+isRead+"</li>";
 			}else{
-				lis += "<li class='chat-left-li'>"+record.tRecord+"<span class='el-avatar el-avatar--circle'><img src='https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png' style='object-fit: cover;'></span></li>";
+				lis += "<li class='chat-left-li' id='"+record.Id+"'><span class='el-avatar el-avatar--circle'><img src='"+record.targetAvatar+"' style='object-fit: cover;'></span>"+record.tRecord+"&emsp;"+isRead+"</li>";
+			}
+			if(ids==""){
+				ids = record.Id;
+			}else{
+				ids = ids + ";" + record.Id;
 			}
 		}
 		$("#el-main").prepend(lis);
+		
+		//设置进入查看页面三秒后，将聊天记录设置为已读
+		window.setTimeout(function(){
+			var data = {"ids":ids};
+			commonAjax('${contextPath}recordDo/isntRead','post',data,'json',false);
+		},3000);
 	}
 </script>
 </body>

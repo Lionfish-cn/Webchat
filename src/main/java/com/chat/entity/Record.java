@@ -14,6 +14,8 @@ public class Record {
     private String tTarget;
 
     private String tSend;
+    
+    private Boolean tIsRead;
 
     public String getId() {
         return id;
@@ -62,4 +64,14 @@ public class Record {
     public void settSend(String tSend) {
         this.tSend = tSend == null ? null : tSend.trim();
     }
+
+	public Boolean gettIsRead() {
+		return tIsRead;
+	}
+
+	public void settIsRead(Boolean tIsRead) {
+		this.tIsRead = tIsRead;
+	}
+    
+    
 }
